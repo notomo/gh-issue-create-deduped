@@ -29,6 +29,7 @@ func TestParseArgs(t *testing.T) {
 					IssueCreateArgs: []string{
 						"--title", "title",
 					},
+					IssueState: "open",
 				},
 			},
 			{
@@ -42,7 +43,8 @@ func TestParseArgs(t *testing.T) {
 					IssueCreateArgs: []string{
 						"--title", "title",
 					},
-					DryRun: true,
+					IssueState: "open",
+					DryRun:     true,
 				},
 			},
 			{
@@ -57,6 +59,7 @@ func TestParseArgs(t *testing.T) {
 					IssueCreateArgs: []string{
 						"--title", "title",
 					},
+					IssueState: "open",
 				},
 			},
 			{
@@ -71,6 +74,7 @@ func TestParseArgs(t *testing.T) {
 					IssueCreateArgs: []string{
 						"--title", "title",
 					},
+					IssueState: "open",
 				},
 			},
 			{
@@ -85,6 +89,21 @@ func TestParseArgs(t *testing.T) {
 						"--title", "title",
 						"--label", "bug",
 					},
+					IssueState: "open",
+				},
+			},
+			{
+				name: "issue state",
+				args: []string{
+					"--title", "title",
+					"--state", "closed",
+				},
+				want: testtarget.Arguments{
+					Title: "title",
+					IssueCreateArgs: []string{
+						"--title", "title",
+					},
+					IssueState: "closed",
 				},
 			},
 		}
@@ -163,6 +182,7 @@ func TestRun(t *testing.T) {
 			mock.Exec,
 			[]string{"--repo", "notomo/example"},
 			"title",
+			"open",
 			[]string{"--title", "title"},
 			false,
 			&stdout,
@@ -188,6 +208,7 @@ func TestRun(t *testing.T) {
 			mock.Exec,
 			[]string{"--repo", "notomo/example"},
 			"title",
+			"open",
 			[]string{"--title", "title"},
 			false,
 			&stdout,

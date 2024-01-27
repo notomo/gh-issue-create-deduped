@@ -21,6 +21,7 @@ func main() {
 		gh.Exec,
 		args.RepoArgs,
 		args.Title,
+		args.IssueState,
 		args.IssueCreateArgs,
 		args.DryRun,
 		os.Stdout,
@@ -36,11 +37,14 @@ type Arguments struct {
 	Title           string
 	RepoArgs        []string
 	DryRun          bool
+	IssueState      string // all|open|closed
 	IssueCreateArgs []string
 }
 
 func ParseArgs(rawArgs []string) (*Arguments, error) {
-	args := &Arguments{}
+	args := &Arguments{
+		IssueState: "open",
+	}
 
 	defaultSetter := func(arg string) {
 		args.IssueCreateArgs = append(args.IssueCreateArgs, arg)
@@ -61,6 +65,10 @@ func ParseArgs(rawArgs []string) (*Arguments, error) {
 			args.IssueCreateArgs = append(args.IssueCreateArgs, arg)
 		case "-dry-run", "--dry-run":
 			args.DryRun = true
+		case "-state", "--state":
+			setter = func(arg string) {
+				args.IssueState = arg
+			}
 		default:
 			setter(arg)
 			setter = defaultSetter
@@ -83,13 +91,14 @@ func Run(
 	execute Execute,
 	repoArgs []string,
 	title string,
+	issueState string,
 	issueCreateArgs []string,
 	dryRun bool,
 	stdout io.Writer,
 	stderr io.Writer,
 ) error {
 	{
-		existed, err := findIssue(execute, repoArgs, title)
+		existed, err := findIssue(execute, repoArgs, title, issueState)
 		if err != nil {
 			return err
 		}
@@ -120,12 +129,13 @@ func findIssue(
 	execute Execute,
 	repoArgs []string,
 	title string,
+	issueState string,
 ) (*Issue, error) {
 	args := []string{"issue"}
 	args = append(args, repoArgs...)
 	args = append(args, []string{
 		"list",
-		"--state", "open",
+		"--state", issueState,
 		"--limit", "1000",
 		"--json", "title,url",
 		"--search", title,
