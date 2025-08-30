@@ -4,7 +4,7 @@ go 1.23.0
 
 require (
 	github.com/cli/go-gh/v2 v2.12.2
-	github.com/stretchr/testify v1.10.0
+	github.com/stretchr/testify v1.11.1
 	golang.org/x/exp v0.0.0-20230210204819-062eb4c674ab
 )
 
